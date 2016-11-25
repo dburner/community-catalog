@@ -6,13 +6,13 @@
   questions:
     - variable: "mysql_root_password"
       type: string
-      required: true
+      required: false
       label: "MySQL Root Password"
       description: "Password given to the root mysql user"
       default: "asd"
     - variable: "pxc_sst_password"
       type: string
-      required: true
+      required: false
       label: "PXC SST Password"
       description: "Password given to the sst mysql user"   
       default: ""   
@@ -34,3 +34,5 @@
       label: "MySQL DB Password"
       default: "asd"
       description: "Password for the MySQL user of the created database"
+members:
+  scale: 3
