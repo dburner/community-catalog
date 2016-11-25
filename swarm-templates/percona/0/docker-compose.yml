@@ -1,0 +1,71 @@
+services:
+  pxc-boostrap:
+    image: ronin/pxc:centos7
+    net: "container:pxc"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${mysql_root_password}"
+      PXC_SST_PASSWORD: "${pxc_sst_password}"
+      MYSQL_DATABASE: "${mysql_database}"
+      MYSQL_PROXY_USER: "${mysql_user}"
+      MYSQL_PROXY_PASSWORD: "${mysql_password}"    
+      CLUSTER_NAME: "cluster15"
+    entrypoint:
+      - /usr/sbin/mysqld
+      - --basedir=/usr
+      - --user=mysql
+      - --wsrep-new-cluster
+      - --skip-grant-tables
+      - --wsrep_cluster_address=gcomm://
+      - --wsrep-sst-method=rsync
+    ports:
+      - 3306:3306
+    labels:
+      io.rancher.container.hostname_override: container_name
+
+  pxc-node2:
+    links:
+      - pxc-boostrap:pxc-boostrap
+    image: ronin/pxc:centos7
+    net: "container:pxc"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${mysql_root_password}"
+      PXC_SST_PASSWORD: "${pxc_sst_password}"
+      MYSQL_DATABASE: "${mysql_database}"
+      MYSQL_PROXY_USER: "${mysql_user}"
+      MYSQL_PROXY_PASSWORD: "${mysql_password}"    
+      CLUSTER_NAME: "cluster15"
+    entrypoint:
+      - /usr/sbin/mysqld
+      - --basedir=/usr
+      - --user=mysql
+      - --skip-grant-tables
+      - --wsrep_cluster_address=gcomm://cluster
+      - --wsrep-sst-method=rsync
+    ports:
+      - 3306:3306
+    labels:
+      io.rancher.container.hostname_override: container_name
+
+  pxc-node3:
+    links:
+      - pxc-boostrap:pxc-boostrap
+    image: ronin/pxc:centos7
+    net: "container:pxc"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${mysql_root_password}"
+      PXC_SST_PASSWORD: "${pxc_sst_password}"
+      MYSQL_DATABASE: "${mysql_database}"
+      MYSQL_PROXY_USER: "${mysql_user}"
+      MYSQL_PROXY_PASSWORD: "${mysql_password}"    
+      CLUSTER_NAME: "cluster15"
+    entrypoint:
+      - /usr/sbin/mysqld
+      - --basedir=/usr
+      - --user=mysql
+      - --skip-grant-tables
+      - --wsrep_cluster_address=gcomm://cluster
+      - --wsrep-sst-method=rsync
+    ports:
+      - 3306:3306
+    labels:
+      io.rancher.container.hostname_override: container_name
