@@ -1,17 +1,26 @@
 bootstrap:
   image: ronin/pxc:centos7
   hostname: Dock1
-  command: sh -c "/usr/sbin/mysqld --basedir=/usr --user=mysql --wsrep-new-cluster --skip-grant-tables  --innodb-flush-method=O_DSYNC"
+  command: sh -c "/usr/sbin/mysqld --basedir=/usr --user=mysql --wsrep-new-cluster --skip-grant-tables --wsrep-cluster-name=percona_cluster --wsrep_cluster_address=gcomm:// --wsrep-sst-method=rsync"
   ports:
-      - "3306"
-      - "4567"
-      - "4568"
+      - "3306:3306"
+      - "4567:4567"
+      - "4568:4568"
+      - "4444:4444"
+  labels:
+    io.rancher.container.network: true
+
 members:
   image: ronin/pxc:centos7
-  command: sh -c "/usr/sbin/mysqld --basedir=/usr --user=mysql --wsrep-node-name=Dock${RANDOM} --innodb-flush-method=O_DSYNC --wsrep_cluster_address=gcomm://Dock1 --skip-grant-tables --wsrep-sst-method=rsync  "
+  command: sh -c "/usr/sbin/mysqld --basedir=/usr --user=mysql --wsrep-node-name=Dock$${RANDOM}  --wsrep-cluster-name=percona_cluster--wsrep_cluster_address=gcomm://Dock1 --skip-grant-tables --wsrep-sst-method=rsync" # --wsrep-sst-receive-address=$$(ip addr show eth0 | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep 10)"
   links:
       - bootstrap:Dock1
   ports:
-      - "3306"
-      - "4567"
-      - "4568"
+      - "3306:3306"
+      - "4567:4567"
+      - "4568:4568"
+      - "4444:4444"
+  labels:
+    io.rancher.container.network: true
+
+#(ip addr show eth0 | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep 10)
